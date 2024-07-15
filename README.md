@@ -4,17 +4,17 @@ A collection of utility functions that I use across my JavaScript and TypeScript
 
 ## Installation
 
-Run the following command to add `tokenx` to your project.
+Run the following command to add `@byjohann/utils` to your project.
 
 ```bash
 # npm
-npm install -D tokenx
+npm install -D @byjohann/utils
 
 # pnpm
-pnpm add -D tokenx
+pnpm add -D @byjohann/utils
 
 # yarn
-yarn add -D tokenx
+yarn add -D @byjohann/utils
 ```
 
 ## License
