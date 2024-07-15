@@ -18,7 +18,7 @@ const urlAlphabet = 'useandom-26T198340PX75pxJACKVERYMINDBUSHWOLF_GQZbfghjklqvwy
 /**
  * Generates a random string
  */
-export function randomStr(size = 16, dict = urlAlphabet) {
+export function generateRandomId(size = 16, dict = urlAlphabet) {
   let id = ''
   let i = size
   const len = dict.length
