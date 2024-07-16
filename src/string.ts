@@ -1,5 +1,5 @@
 /**
- * Simple template engine to replace variables in a string
+ * Simple template engine to replace variables in a string.
  */
 export function template(
   str: string,
@@ -16,7 +16,7 @@ export function template(
 const urlAlphabet = 'useandom-26T198340PX75pxJACKVERYMINDBUSHWOLF_GQZbfghjklqvwyzrict'
 
 /**
- * Generates a random string
+ * Generates a random string.
  */
 export function generateRandomId(size = 16, dict = urlAlphabet) {
   let id = ''
