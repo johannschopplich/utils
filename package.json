@@ -20,9 +20,37 @@
       "types": "./dist/index.d.mts",
       "default": "./dist/index.mjs"
     },
+    "./array": {
+      "types": "./dist/array.d.mts",
+      "default": "./dist/array.mjs"
+    },
+    "./csv": {
+      "types": "./dist/csv.d.mts",
+      "default": "./dist/csv.mjs"
+    },
+    "./is": {
+      "types": "./dist/is.d.mts",
+      "default": "./dist/is.mjs"
+    },
+    "./json": {
+      "types": "./dist/json.d.mts",
+      "default": "./dist/json.mjs"
+    },
+    "./module": {
+      "types": "./dist/module.d.mts",
+      "default": "./dist/module.mjs"
+    },
+    "./object": {
+      "types": "./dist/object.d.mts",
+      "default": "./dist/object.mjs"
+    },
     "./path": {
-      "types": "./dist/path/index.d.mts",
-      "default": "./dist/path/index.mjs"
+      "types": "./dist/path.d.mts",
+      "default": "./dist/path.mjs"
+    },
+    "./string": {
+      "types": "./dist/string.d.mts",
+      "default": "./dist/string.mjs"
     }
   },
   "types": "./dist/index.d.ts",

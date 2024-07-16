@@ -1,4 +1,4 @@
-import type { MaybeArray } from './types'
+export type MaybeArray<T> = T | T[]
 
 /**
  * Converts `MaybeArray<T>` to `Array<T>`.

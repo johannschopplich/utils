@@ -1,4 +1,4 @@
-export function withLeadingSlash(path: string | undefined): string {
+export function withLeadingSlash(path?: string): string {
   if (!path || path === '/') {
     return '/'
   }
@@ -6,7 +6,7 @@ export function withLeadingSlash(path: string | undefined): string {
   return path[0] === '/' ? path : `/${path}`
 }
 
-export function withoutTrailingSlash(path: string | undefined): string {
+export function withoutTrailingSlash(path?: string): string {
   if (!path || path === '/') {
     return '/'
   }
@@ -14,7 +14,7 @@ export function withoutTrailingSlash(path: string | undefined): string {
   return path[path.length - 1] === '/' ? path.slice(0, -1) : path
 }
 
-export function withTrailingSlash(path: string | undefined): string {
+export function withTrailingSlash(path?: string): string {
   if (!path || path === '/') {
     return '/'
   }
@@ -23,8 +23,8 @@ export function withTrailingSlash(path: string | undefined): string {
 }
 
 export function joinURL(
-  base: string | undefined,
-  path: string | undefined,
+  base?: string,
+  path?: string,
 ): string {
   if (!base || base === '/') {
     return path || '/'
@@ -47,7 +47,7 @@ export function joinURL(
   return base + path
 }
 
-export function withoutBase(input: string = '', base: string = '') {
+export function withoutBase(input = '', base = ''): string {
   if (!base || base === '/') {
     return input
   }
@@ -61,7 +61,7 @@ export function withoutBase(input: string = '', base: string = '') {
   return trimmed[0] === '/' ? trimmed : `/${trimmed}`
 }
 
-export function getPathname(path: string = '/') {
+export function getPathname(path = '/') {
   return path.startsWith('/')
     ? path.split('?')[0]
     : new URL(path, 'http://localhost').pathname
