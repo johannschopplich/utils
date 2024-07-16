@@ -33,20 +33,26 @@ declare function toArray<T>(array?: MaybeArray<T> | null | undefined): T[]
 
 ### CSV
 
-#### `createCsv`
+#### `createCSV`
 
 Converts an array of objects to a comma-separated values (CSV) string that contains only the `columns` specified.
 
 ```ts
-declare function createCsv<T extends Record<string, any>>(
+declare function createCSV<T extends Record<string, unknown>>(
   data: T[],
   columns: (keyof T)[],
-  /** @default ',' */
-  delimiter?: string
+  options?: {
+    /** @default ',' */
+    delimiter?: string
+    /** @default true */
+    includeHeaders?: boolean
+    /** @default false */
+    quoteAll?: boolean
+  }
 ): string
 ```
 
-#### `escapeCsvValue`
+#### `escapeCSVValue`
 
 Escapes a value for a CSV string.
 
@@ -54,7 +60,7 @@ Escapes a value for a CSV string.
 > Returns an empty string if the value is `null` or `undefined`.
 
 ```ts
-declare function escapeCsvValue(value: unknown): string
+declare function escapeCSVValue(value: unknown): string
 ```
 
 ### JSON

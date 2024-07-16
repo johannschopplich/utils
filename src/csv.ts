@@ -2,18 +2,40 @@
  * Converts an array of objects to a comma-separated values (CSV) string
  * that contains only the `columns` specified.
  */
-export function createCsv<T extends Record<string, any>>(
+export function createCSV<T extends Record<string, unknown>>(
   data: T[],
   columns: (keyof T)[],
-  /** @default ',' */
-  delimiter = ',',
+  options: {
+    /** @default ',' */
+    delimiter?: string
+    /** @default true */
+    includeHeaders?: boolean
+    /** @default false */
+    quoteAll?: boolean
+  } = {},
 ) {
-  return [
-    columns.join(delimiter),
-    ...data.map(obj =>
-      columns.map(key => `"${escapeCsvValue(obj[key])}"`).join(delimiter),
-    ),
-  ].join('\n')
+  const {
+    delimiter = ',',
+    includeHeaders = true,
+    quoteAll = false,
+  } = options
+
+  const escapeAndQuote = (value: unknown) => {
+    const escaped = escapeCSVValue(value)
+    return quoteAll || escaped.includes(delimiter) || escaped.includes('"') || escaped.includes('\n')
+      ? `"${escaped}"`
+      : escaped
+  }
+
+  const rows = data.map(obj =>
+    columns.map(key => escapeAndQuote(obj[key])).join(delimiter),
+  )
+
+  if (includeHeaders) {
+    rows.unshift(columns.map(escapeAndQuote).join(delimiter))
+  }
+
+  return rows.join('\n')
 }
 
 /**
@@ -22,11 +44,13 @@ export function createCsv<T extends Record<string, any>>(
  * @remarks
  * Returns an empty string if the value is `null` or `undefined`.
  */
-export function escapeCsvValue(value: unknown) {
+export function escapeCSVValue(value: unknown) {
   if (value == null) {
     return ''
   }
 
   // Encode double quotes
-  return value.toString().replace(/"/g, '""').replace(/\n/g, ' ')
+  return value.toString()
+    .replaceAll('"', '""')
+    .replaceAll('\n', ' ')
 }
