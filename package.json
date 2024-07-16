@@ -19,6 +19,10 @@
     ".": {
       "types": "./dist/index.d.mts",
       "default": "./dist/index.mjs"
+    },
+    "./path": {
+      "types": "./dist/path/index.d.mts",
+      "default": "./dist/path/index.mjs"
     }
   },
   "types": "./dist/index.d.ts",

@@ -1,3 +1,6 @@
+const URL_ALPHABET = 'useandom-26T198340PX75pxJACKVERYMINDBUSHWOLF_GQZbfghjklqvwyzrict'
+const RE_FULL_WHITESPACE = /^\s*$/
+
 /**
  * Simple template engine to replace variables in a string.
  */
@@ -11,14 +14,13 @@ export function template(
   })
 }
 
-// Ported from `nanoid`
-// See: https://github.com/ai/nanoid
-const urlAlphabet = 'useandom-26T198340PX75pxJACKVERYMINDBUSHWOLF_GQZbfghjklqvwyzrict'
-
 /**
  * Generates a random string.
+ *
+ * @remarks Ported from nanoid.
+ * @see https://github.com/ai/nanoid
  */
-export function generateRandomId(size = 16, dict = urlAlphabet) {
+export function generateRandomId(size = 16, dict = URL_ALPHABET) {
   let id = ''
   let i = size
   const len = dict.length
@@ -26,8 +28,6 @@ export function generateRandomId(size = 16, dict = urlAlphabet) {
     id += dict[(Math.random() * len) | 0]
   return id
 }
-
-const RE_FULL_WHITESPACE = /^\s*$/
 
 /**
  * Removes common leading whitespace from a template string while

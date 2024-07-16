@@ -23,18 +23,16 @@ export default function cloneJSON<T>(value: T): T {
     return value
   }
 
-  else if (Array.isArray(value)) {
+  if (Array.isArray(value)) {
     return value.map(e => (typeof e !== 'object' || e === null ? e : cloneJSON(e))) as T
   }
 
-  else {
-    const result: Record<string, unknown> = {}
+  const result: Record<string, unknown> = {}
 
-    for (const k in value) {
-      const v = value[k]
-      result[k] = typeof v !== 'object' || v === null ? v : cloneJSON(v)
-    }
-
-    return result as T
+  for (const k in value) {
+    const v = value[k]
+    result[k] = typeof v !== 'object' || v === null ? v : cloneJSON(v)
   }
+
+  return result as T
 }

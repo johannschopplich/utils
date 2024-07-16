@@ -1,3 +1,4 @@
+export * from './path/index'
 export * from './array'
 export * from './csv'
 export * from './json'
