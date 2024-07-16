@@ -2,7 +2,7 @@
  * Type-safe wrapper around `JSON.stringify` falling back to the original value
  * if it is not a string or an error is thrown.
  */
-export function tryParseJson<T = unknown>(value: unknown): T {
+export function tryParseJSON<T = unknown>(value: unknown): T {
   if (typeof value !== 'string') {
     return value as T
   }
@@ -18,13 +18,13 @@ export function tryParseJson<T = unknown>(value: unknown): T {
 /**
  * Clones the given JSON value.
  */
-export default function cloneJson<T>(value: T): T {
+export default function cloneJSON<T>(value: T): T {
   if (typeof value !== 'object' || value === null) {
     return value
   }
 
   else if (Array.isArray(value)) {
-    return value.map(e => (typeof e !== 'object' || e === null ? e : cloneJson(e))) as T
+    return value.map(e => (typeof e !== 'object' || e === null ? e : cloneJSON(e))) as T
   }
 
   else {
@@ -32,7 +32,7 @@ export default function cloneJson<T>(value: T): T {
 
     for (const k in value) {
       const v = value[k]
-      result[k] = typeof v !== 'object' || v === null ? v : cloneJson(v)
+      result[k] = typeof v !== 'object' || v === null ? v : cloneJSON(v)
     }
 
     return result as T
