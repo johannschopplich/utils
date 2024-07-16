@@ -1,3 +1,6 @@
+/**
+ * Represents a value that can be either a single value or an array of values.
+ */
 export type MaybeArray<T> = T | T[]
 
 /**

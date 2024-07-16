@@ -15,7 +15,7 @@ export function objectEntries<T extends Record<any, any>>(obj: T) {
 }
 
 /**
- * Deeply applies a callback to each key-value pair in the object.
+ * Deeply applies a callback to every key-value pair in the given object, as well as nested objects and arrays.
  */
 export function deepApply<T extends Record<any, any>>(
   data: T,

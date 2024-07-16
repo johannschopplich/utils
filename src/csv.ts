@@ -16,6 +16,12 @@ export function createCsv<T extends Record<string, any>>(
   ].join('\n')
 }
 
+/**
+ * Escapes a value for a CSV string.
+ *
+ * @remarks
+ * Returns an empty string if the value is `null` or `undefined`.
+ */
 export function escapeCsvValue(value: unknown) {
   if (value == null) {
     return ''

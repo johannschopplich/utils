@@ -3,6 +3,12 @@ const RE_FULL_WHITESPACE = /^\s*$/
 
 /**
  * Simple template engine to replace variables in a string.
+ *
+ * @example
+ * const str = 'Hello, {name}!'
+ * const variables = { name: 'world' }
+ *
+ * console.log(template(str, variables)) // Hello, world!
  */
 export function template(
   str: string,

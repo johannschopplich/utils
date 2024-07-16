@@ -17,6 +17,9 @@ export function tryParseJSON<T = unknown>(value: unknown): T {
 
 /**
  * Clones the given JSON value.
+ *
+ * @remarks
+ * The value must not contain circular references as JSON does not support them. It also must contain JSON serializable values.
  */
 export default function cloneJSON<T>(value: T): T {
   if (typeof value !== 'object' || value === null) {

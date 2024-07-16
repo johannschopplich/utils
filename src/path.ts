@@ -1,3 +1,6 @@
+/**
+ * Adds a leading slash to the given path if it does not already have one.
+ */
 export function withLeadingSlash(path?: string): string {
   if (!path || path === '/') {
     return '/'
@@ -6,6 +9,9 @@ export function withLeadingSlash(path?: string): string {
   return path[0] === '/' ? path : `/${path}`
 }
 
+/**
+ * Removes the trailing slash from the given path if it has one.
+ */
 export function withoutTrailingSlash(path?: string): string {
   if (!path || path === '/') {
     return '/'
@@ -14,6 +20,9 @@ export function withoutTrailingSlash(path?: string): string {
   return path[path.length - 1] === '/' ? path.slice(0, -1) : path
 }
 
+/**
+ * Adds a trailing slash to the given path if it does not already have one
+ */
 export function withTrailingSlash(path?: string): string {
   if (!path || path === '/') {
     return '/'
@@ -22,6 +31,9 @@ export function withTrailingSlash(path?: string): string {
   return path[path.length - 1] === '/' ? path : `${path}/`
 }
 
+/**
+ * Joins the given base URL and path, ensuring that there is only one slash between them.
+ */
 export function joinURL(
   base?: string,
   path?: string,
@@ -47,6 +59,9 @@ export function joinURL(
   return base + path
 }
 
+/**
+ * Removes the base path from the input path, if it is present.
+ */
 export function withoutBase(input = '', base = ''): string {
   if (!base || base === '/') {
     return input
@@ -61,6 +76,9 @@ export function withoutBase(input = '', base = ''): string {
   return trimmed[0] === '/' ? trimmed : `/${trimmed}`
 }
 
+/**
+ * Returns the pathname of the given path, which is the path without the query string.
+ */
 export function getPathname(path = '/') {
   return path.startsWith('/')
     ? path.split('?')[0]
