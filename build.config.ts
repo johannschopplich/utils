@@ -11,6 +11,7 @@ export default defineBuildConfig({
     'src/object',
     'src/path',
     'src/string',
+    'src/types',
   ],
   clean: true,
   declaration: true,
