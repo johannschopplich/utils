@@ -1,7 +1,7 @@
 {
   "name": "@byjohann/utils",
   "type": "module",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "packageManager": "pnpm@9.7.1",
   "description": "A collection of utilities for my projects",
   "author": "Johann Schopplich <hello@johannschopplich.com>",
