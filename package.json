@@ -48,6 +48,10 @@
       "types": "./dist/path.d.mts",
       "default": "./dist/path.mjs"
     },
+    "./result": {
+      "types": "./dist/result.d.mts",
+      "default": "./dist/result.mjs"
+    },
     "./string": {
       "types": "./dist/string.d.mts",
       "default": "./dist/string.mjs"

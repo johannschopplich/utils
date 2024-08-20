@@ -180,6 +180,94 @@ Returns the pathname of the given path, which is the path without the query stri
 declare function getPathname(path?: string): string
 ```
 
+### Result
+
+The Result type provides a way to handle operations that might fail, similar to Rust's Result type.
+
+#### `Result<T, E>`
+
+A type that represents either a successful value of type `T` or an error of type `E`.
+
+```ts
+type Result<T, E> = Ok<T> | Err<E>
+```
+
+#### `Ok<T>`
+
+Represents a successful result containing a value of type `T`.
+
+```ts
+class Ok<T> {
+  readonly ok = true
+  constructor(public value: T) {}
+}
+```
+
+#### `Err<E>`
+
+Represents a failed result containing an error of type `E`.
+
+```ts
+class Err<E> {
+  readonly ok = false
+  constructor(public error: E) {}
+}
+```
+
+#### `ok<T>`
+
+Creates an `Ok` instance.
+
+```ts
+declare function ok<T>(value: T): Ok<T>
+```
+
+#### `err<E>`
+
+Creates an `Err` instance.
+
+```ts
+declare function err<E>(error: E): Err<E>
+```
+
+#### `trySafe`
+
+Wraps a function or promise in a try-catch block, returning a `Result`.
+
+```ts
+declare function trySafe<T, E = unknown>(fn: () => T): Result<T, E>
+declare function trySafe<T, E = unknown>(promise: Promise<T>): Promise<Result<T, E>>
+```
+
+**Example:**
+
+```ts
+import { trySafe } from '@byjohann/utils'
+
+// With a synchronous function
+const result = trySafe(() => {
+  // Some operation that might throw
+  return 'success'
+})
+
+if (result.ok) {
+  console.log(result.value) // 'success'
+}
+else {
+  console.error(result.error)
+}
+
+// With a promise
+const asyncResult = await trySafe(Promise.resolve('async success'))
+
+if (asyncResult.ok) {
+  console.log(asyncResult.value) // 'async success'
+}
+else {
+  console.error(asyncResult.error)
+}
+```
+
 ### String
 
 #### `template`
