@@ -10,7 +10,6 @@ export default defineBuildConfig({
     'src/module',
     'src/object',
     'src/path',
-    'src/result',
     'src/string',
     'src/types',
   ],
