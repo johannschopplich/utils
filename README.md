@@ -132,6 +132,14 @@ declare function deepApply<T extends Record<any, any>>(data: T, callback: (item:
 
 ### Path
 
+#### `withoutLeadingSlash`
+
+Removes the leading slash from the given path if it has one.
+
+```ts
+declare function withoutLeadingSlash(path?: string): string
+```
+
 #### `withLeadingSlash`
 
 Adds a leading slash to the given path if it does not already have one.

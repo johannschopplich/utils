@@ -1,4 +1,15 @@
 /**
+ * Removes the leading slash from the given path if it has one.
+ */
+export function withoutLeadingSlash(path?: string): string {
+  if (!path || path === '/') {
+    return '/'
+  }
+
+  return path[0] === '/' ? path.slice(1) : path
+}
+
+/**
  * Adds a leading slash to the given path if it does not already have one.
  */
 export function withLeadingSlash(path?: string): string {
