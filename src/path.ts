@@ -86,7 +86,7 @@ export function withBase(input = '', base = ''): string {
     return input
   }
 
-  return joinURL(base, input)
+  return joinURL(_base, input)
 }
 
 /**
