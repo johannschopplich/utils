@@ -1,3 +1,6 @@
+export type QueryValue = string | number | boolean | QueryValue[] | Record<string, any> | null | undefined
+export type QueryObject = Record<string, QueryValue | QueryValue[]>
+
 /**
  * Removes the leading slash from the given path if it has one.
  */
@@ -71,6 +74,22 @@ export function joinURL(
 }
 
 /**
+ * Adds the base path to the input path, if it is not already present.
+ */
+export function withBase(input = '', base = ''): string {
+  if (!base || base === '/') {
+    return input
+  }
+
+  const _base = withoutTrailingSlash(base)
+  if (input.startsWith(_base)) {
+    return input
+  }
+
+  return joinURL(base, input)
+}
+
+/**
  * Removes the base path from the input path, if it is present.
  */
 export function withoutBase(input = '', base = ''): string {
@@ -90,8 +109,42 @@ export function withoutBase(input = '', base = ''): string {
 /**
  * Returns the pathname of the given path, which is the path without the query string.
  */
-export function getPathname(path = '/') {
+export function getPathname(path = '/'): string {
   return path.startsWith('/')
     ? path.split('?')[0]
     : new URL(path, 'http://localhost').pathname
+}
+
+/**
+ * Returns the URL with the given query parameters. If a query parameter is undefined, it is omitted.
+ */
+export function withQuery(input: string, query: QueryObject): string {
+  const url = new URL(input, 'http://localhost')
+  const searchParams = new URLSearchParams(url.search)
+
+  for (const [key, value] of Object.entries(query)) {
+    if (value === undefined) {
+      continue
+    }
+    else if (typeof value === 'number' || typeof value === 'boolean') {
+      searchParams.set(key, String(value))
+    }
+    else if (!value) {
+      searchParams.set(key, '')
+    }
+    else if (Array.isArray(value)) {
+      for (const item of value) {
+        searchParams.append(key, String(item))
+      }
+    }
+    else if (typeof value === 'object') {
+      searchParams.set(key, JSON.stringify(value))
+    }
+    else {
+      searchParams.set(key, String(value))
+    }
+  }
+
+  url.search = searchParams.toString()
+  return url.toString()
 }

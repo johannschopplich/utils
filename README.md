@@ -172,6 +172,14 @@ Joins the given base URL and path, ensuring that there is only one slash between
 declare function joinURL(base?: string, path?: string): string
 ```
 
+#### `withBase`
+
+Adds the base path to the input path, if it is not already present.
+
+```ts
+declare function withBase(input?: string, base?: string): string
+```
+
 #### `withoutBase`
 
 Removes the base path from the input path, if it is present.
@@ -186,6 +194,14 @@ Returns the pathname of the given path, which is the path without the query stri
 
 ```ts
 declare function getPathname(path?: string): string
+```
+
+#### `withQuery`
+
+Returns the URL with the given query parameters. If a query parameter is undefined, it is omitted.
+
+```ts
+declare function withQuery(input: string, query: QueryObject): string
 ```
 
 ### String
