@@ -124,7 +124,7 @@ export function withQuery(input: string, query: QueryObject): string {
 
   for (const [key, value] of Object.entries(query)) {
     if (value === undefined) {
-      continue
+      searchParams.delete(key)
     }
     else if (typeof value === 'number' || typeof value === 'boolean') {
       searchParams.set(key, String(value))
@@ -146,5 +146,11 @@ export function withQuery(input: string, query: QueryObject): string {
   }
 
   url.search = searchParams.toString()
-  return url.toString()
+  let urlWithQuery = url.toString()
+
+  if (urlWithQuery.startsWith('http://localhost')) {
+    urlWithQuery = urlWithQuery.slice(16)
+  }
+
+  return urlWithQuery
 }
