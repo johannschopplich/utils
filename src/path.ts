@@ -121,6 +121,10 @@ export function getPathname(path = '/'): string {
  * Returns the URL with the given query parameters. If a query parameter is undefined, it is omitted.
  */
 export function withQuery(input: string, query: QueryObject): string {
+  if (!query || Object.keys(query).length === 0) {
+    return input
+  }
+
   let url: URL | undefined
   let searchParams: URLSearchParams
 
