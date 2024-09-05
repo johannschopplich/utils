@@ -241,7 +241,7 @@ console.log(template(str, variables)) // Hello, world!
 
 #### `generateRandomId`
 
-Generates a random string.
+Generates a random string. The function is ported from [`nanoid`](https://github.com/ai/nanoid). You can specify the size of the string and the dictionary of characters to use.
 
 ```ts
 declare function generateRandomId(size?: number, dict?: string): string
