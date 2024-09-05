@@ -204,6 +204,20 @@ Returns the URL with the given query parameters. If a query parameter is undefin
 declare function withQuery(input: string, query: QueryObject): string
 ```
 
+**Example:**
+
+```ts
+import { withQuery } from '@byjohann/utils'
+
+const url = withQuery('https://example.com', {
+  foo: 'bar',
+  // This key is omitted
+  baz: undefined,
+  // Object values are stringified
+  baz: { qux: 'quux' }
+})
+```
+
 ### String
 
 #### `template`
