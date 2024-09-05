@@ -1,8 +1,6 @@
 export type QueryValue = string | number | boolean | QueryValue[] | Record<string, any> | null | undefined
 export type QueryObject = Record<string, QueryValue | QueryValue[]>
 
-const DEFAULT_BASE_URL = 'http://localhost'
-
 /**
  * Removes the leading slash from the given path if it has one.
  */
@@ -114,7 +112,7 @@ export function withoutBase(input = '', base = ''): string {
 export function getPathname(path = '/'): string {
   return path.startsWith('/')
     ? path.split('?')[0]
-    : new URL(path, DEFAULT_BASE_URL).pathname
+    : new URL(path, 'http://localhost').pathname
 }
 
 /**
@@ -125,16 +123,9 @@ export function withQuery(input: string, query: QueryObject): string {
     return input
   }
 
-  let url: URL | undefined
-  let searchParams: URLSearchParams
-
-  if (input.includes('?')) {
-    url = new URL(input, DEFAULT_BASE_URL)
-    searchParams = new URLSearchParams(url.search)
-  }
-  else {
-    searchParams = new URLSearchParams()
-  }
+  const searchIndex = input.indexOf('?')
+  const baseUrl = searchIndex === -1 ? input : input.slice(0, searchIndex)
+  const searchParams = new URLSearchParams(searchIndex === -1 ? '' : input.slice(searchIndex + 1))
 
   for (const [key, value] of Object.entries(query)) {
     if (value === undefined) {
@@ -160,15 +151,5 @@ export function withQuery(input: string, query: QueryObject): string {
   }
 
   const queryString = searchParams.toString()
-
-  if (url) {
-    url.search = queryString
-    let urlWithQuery = url.toString()
-    if (urlWithQuery.startsWith(DEFAULT_BASE_URL)) {
-      urlWithQuery = urlWithQuery.slice(16)
-    }
-    return urlWithQuery
-  }
-
-  return queryString ? `${input}?${queryString}` : input
+  return queryString ? `${baseUrl}?${queryString}` : baseUrl
 }
