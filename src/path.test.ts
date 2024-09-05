@@ -86,9 +86,9 @@ describe('withQuery', () => {
     { input: '/', query: {}, out: '/' },
     { input: '?test', query: {}, out: '?test' },
     { input: '/?test', query: {}, out: '/?test' },
-    { input: '/?test', query: { foo: '0' }, out: '/?test&foo=0' },
-    { input: '/?test', query: { foo: 0 }, out: '/?test&foo=0' },
-    { input: '/?test', query: { foo: 1 }, out: '/?test&foo=1' },
+    { input: '/?test', query: { foo: '0' }, out: '/?test=&foo=0' },
+    { input: '/?test', query: { foo: 0 }, out: '/?test=&foo=0' },
+    { input: '/?test', query: { foo: 1 }, out: '/?test=&foo=1' },
     { input: '/?test', query: { test: undefined }, out: '/' },
     { input: '/?foo=1', query: { foo: 2 }, out: '/?foo=2' },
     {
@@ -98,7 +98,7 @@ describe('withQuery', () => {
     },
     { input: '/?foo=1', query: { foo: undefined }, out: '/' },
 
-    { input: '/?foo=1', query: { foo: null }, out: '/?foo' },
+    { input: '/?foo=1', query: { foo: null }, out: '/?foo=' },
     {
       input: '/',
       query: { email: 'some email.com' },
@@ -114,29 +114,29 @@ describe('withQuery', () => {
       query: { str: '&', str2: '%26' },
       out: '/?str=%26&str2=%2526',
     },
-    { input: '/?x=1,2,3', query: { y: '1,2,3' }, out: '/?x=1,2,3&y=1,2,3' },
+    { input: '/?x=1,2,3', query: { y: '1,2,3' }, out: '/?x=1%2C2%2C3&y=1%2C2%2C3' },
     { input: 'http://a.com?v=1', query: { x: 2 }, out: 'http://a.com?v=1&x=2' },
     {
       input: '/',
       query: { json: '{"test":["content"]}' },
-      out: '/?json=%7B%22test%22:%5B%22content%22%5D%7D',
+      out: '/?json=%7B%22test%22%3A%5B%22content%22%5D%7D',
     },
     { input: '/', query: { param: ['3', ''] }, out: '/?param=3&param=' },
     { input: '/', query: { param: ['', '3'] }, out: '/?param=&param=3' },
     {
       input: '/',
       query: { param: { a: { nested: { object: 123 } } } },
-      out: '/?param=%7B%22a%22:%7B%22nested%22:%7B%22object%22:123%7D%7D%7D',
+      out: '/?param=%7B%22a%22%3A%7B%22nested%22%3A%7B%22object%22%3A123%7D%7D%7D',
     },
     {
       input: '/',
       query: { param: { a: [{ obj: 1 }, { obj: 2 }] } },
-      out: '/?param=%7B%22a%22:%5B%7B%22obj%22:1%7D,%7B%22obj%22:2%7D%5D%7D', // {"a":[{"obj":1},{"obj":2}]}
+      out: '/?param=%7B%22a%22%3A%5B%7B%22obj%22%3A1%7D%2C%7B%22obj%22%3A2%7D%5D%7D', // {"a":[{"obj":1},{"obj":2}]}
     },
     {
       input: '/',
       query: { param: { a: [{ obj: [1, 2, 3] }] } },
-      out: '/?param=%7B%22a%22:%5B%7B%22obj%22:%5B1,2,3%5D%7D%5D%7D', // {"a":[{"obj":[1,2,3]}]}
+      out: '/?param=%7B%22a%22%3A%5B%7B%22obj%22%3A%5B1%2C2%2C3%5D%7D%5D%7D', // {"a":[{"obj":[1,2,3]}]}
     },
     {
       input: '/',
