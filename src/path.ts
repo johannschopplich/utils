@@ -124,7 +124,7 @@ export function withQuery(input: string, query: QueryObject): string {
   }
 
   const searchIndex = input.indexOf('?')
-  const baseUrl = searchIndex === -1 ? input : input.slice(0, searchIndex)
+  const base = searchIndex === -1 ? input : input.slice(0, searchIndex)
   const searchParams = new URLSearchParams(searchIndex === -1 ? '' : input.slice(searchIndex + 1))
 
   for (const [key, value] of Object.entries(query)) {
@@ -151,5 +151,5 @@ export function withQuery(input: string, query: QueryObject): string {
   }
 
   const queryString = searchParams.toString()
-  return queryString ? `${baseUrl}?${queryString}` : baseUrl
+  return queryString ? `${base}?${queryString}` : base
 }
