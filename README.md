@@ -201,7 +201,7 @@ declare function getPathname(path?: string): string
 Returns the URL with the given query parameters. If a query parameter is undefined, it is omitted.
 
 ```ts
-declare function withQuery(input: string, query: QueryObject): string
+declare function withQuery(input: string, query?: QueryObject): string
 ```
 
 **Example:**
