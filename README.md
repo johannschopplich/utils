@@ -73,7 +73,12 @@ Escapes a value for a CSV string.
 > Returns an empty string if the value is `null` or `undefined`.
 
 ```ts
-declare function escapeCSVValue(value: unknown): string
+declare function escapeCSVValue(value: unknown, { delimiter, quoteAll, }?: {
+  /** @default ',' */
+  delimiter?: string
+  /** @default false */
+  quoteAll?: boolean
+}): string
 ```
 
 ### JSON
