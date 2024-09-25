@@ -1,3 +1,5 @@
+export type CSVRow<T extends string = string> = Record<T, string>
+
 /**
  * Converts an array of objects to a comma-separated values (CSV) string
  * that contains only the `columns` specified.
@@ -9,14 +11,14 @@ export function createCSV<T extends Record<string, unknown>>(
     /** @default ',' */
     delimiter?: string
     /** @default true */
-    includeHeaders?: boolean
+    addHeader?: boolean
     /** @default false */
     quoteAll?: boolean
   } = {},
 ) {
   const {
     delimiter = ',',
-    includeHeaders = true,
+    addHeader = true,
     quoteAll = false,
   } = options
 
@@ -31,11 +33,36 @@ export function createCSV<T extends Record<string, unknown>>(
     columns.map(key => escapeAndQuote(obj[key])).join(delimiter),
   )
 
-  if (includeHeaders) {
+  if (addHeader) {
     rows.unshift(columns.map(escapeAndQuote).join(delimiter))
   }
 
   return rows.join('\n')
+}
+
+/**
+ * Parses a comma-separated values (CSV) string into an array of objects.
+ *
+ * @remarks
+ * The first row of the CSV string is used as the header row.
+ */
+export function parseCSV<Header extends string>(csv: string): CSVRow<Header>[] {
+  // Split the CSV string into rows
+  const rows = csv.trim().split('\n')
+
+  const [header, ...rest] = rows
+  if (!header || !rest.length)
+    return []
+
+  const headers = parseCSVLine(header)
+
+  return rest.map((row) => {
+    const values = parseCSVLine(row)
+
+    return Object.fromEntries(
+      headers.map((header, index) => [header, values[index]!]),
+    ) as CSVRow<Header>
+  })
 }
 
 /**
@@ -53,4 +80,8 @@ export function escapeCSVValue(value: unknown) {
   return value.toString()
     .replaceAll('"', '""')
     .replaceAll('\n', ' ')
+}
+
+function parseCSVLine(input: string): string[] {
+  return input.split(',').map(item => item.trim())
 }

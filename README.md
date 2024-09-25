@@ -52,6 +52,19 @@ declare function createCSV<T extends Record<string, unknown>>(
 ): string
 ```
 
+#### `parseCSV`
+
+Parses a comma-separated values (CSV) string into an array of objects.
+
+> [!NOTE]
+> The first row of the CSV string is used as the header row.
+
+```ts
+type CSVRow<T extends string = string> = Record<T, string>
+
+declare function parseCSV<Header extends string>(csv: string): CSVRow<Header>[]
+```
+
 #### `escapeCSVValue`
 
 Escapes a value for a CSV string.
