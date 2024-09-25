@@ -114,7 +114,9 @@ declare function interopDefault<T>(m: T | Promise<T>): Promise<T extends {
 ```ts
 import { interopDefault } from '@byjohann/utils'
 
-const mod = await interopDefault(import('./module.js'))
+async function loadModule() {
+  const mod = await interopDefault(import('./module.js'))
+}
 ```
 
 ### Object
