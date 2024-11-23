@@ -275,6 +275,19 @@ Removes common leading whitespace from a template string while also removing emp
 declare function unindent(str: TemplateStringsArray | string): string
 ```
 
+#### `stripIndents`
+
+Removes common leading whitespace from a template string.
+
+```ts
+stripIndents`
+  Hello
+    World
+` // => "Hello\nWorld"
+
+stripIndents('  Hello\n    World') // => "Hello\nWorld"
+```
+
 ## License
 
 [MIT](./LICENSE) License © 2024-PRESENT [Johann Schopplich](https://github.com/johannschopplich)
