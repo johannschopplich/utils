@@ -7,6 +7,7 @@ export default defineBuildConfig({
     'src/csv',
     'src/is',
     'src/json',
+    'src/lazy',
     'src/module',
     'src/object',
     'src/path',

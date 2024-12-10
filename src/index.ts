@@ -1,6 +1,7 @@
 export * from './array'
 export * from './csv'
 export * from './json'
+export * from './lazy'
 export * from './module'
 export * from './object'
 export * from './path'

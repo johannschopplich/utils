@@ -102,6 +102,29 @@ Clones the given JSON value.
 declare function cloneJSON<T>(value: T): T
 ```
 
+### Lazy
+
+A simple general purpose memoizer utility.
+
+- Lazily computes a value when accessed
+- Auto-caches the result by overwriting the getter
+- Typesafe
+
+Useful for deferring initialization or expensive operations. Unlike a simple getter, there is no runtime overhead after the first invokation, since the getter itself is overwritten with the memoized value.
+
+```ts
+declare function lazy<T>(getter: () => T): { value: T }
+```
+
+**Example:**
+
+```ts
+const myValue = lazy(() => 'Hello, World!')
+console.log(myValue.value) // Computes value, overwrites getter
+console.log(myValue.value) // Returns cached value
+console.log(myValue.value) // Returns cached value
+```
+
 ### Module
 
 #### `interopDefault`
