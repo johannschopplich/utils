@@ -1,5 +1,3 @@
-import { isObject } from './is'
-
 /**
  * Strictly typed `Object.keys`.
  */
@@ -35,4 +33,8 @@ export function deepApply<T extends Record<any, any>>(
       deepApply(value, callback)
     }
   }
+}
+
+function isObject(value: unknown): value is Record<any, any> {
+  return Object.prototype.toString.call(value) === '[object Object]'
 }

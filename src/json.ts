@@ -1,6 +1,8 @@
 /**
- * Type-safe wrapper around `JSON.stringify` falling back to the original value
- * if it is not a string or an error is thrown.
+ * Type-safe wrapper around `JSON.stringify`.
+ *
+ * @remarks
+ * Falls back to the original value if the JSON serialization fails or the value is not a string.
  */
 export function tryParseJSON<T = unknown>(value: unknown): T {
   if (typeof value !== 'string') {

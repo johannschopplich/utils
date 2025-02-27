@@ -46,31 +46,40 @@ export function withTrailingSlash(path?: string): string {
 }
 
 /**
- * Joins the given base URL and path, ensuring that there is only one slash between them.
+ * Joins the given URL path segments, ensuring that there is only one slash between them.
  */
 export function joinURL(
-  base?: string,
-  path?: string,
+  ...paths: (string | undefined)[]
 ): string {
-  if (!base || base === '/') {
-    return path || '/'
+  let result = ''
+
+  for (let i = 0; i < paths.length; i++) {
+    const path = paths[i]
+
+    if (!result || result === '/') {
+      result = path || '/'
+      continue
+    }
+
+    if (!path || path === '/') {
+      continue
+    }
+
+    const resultHasTrailing = result[result.length - 1] === '/'
+    const pathHasLeading = path[0] === '/'
+
+    if (resultHasTrailing && pathHasLeading) {
+      result += path.slice(1)
+    }
+    else if (!resultHasTrailing && !pathHasLeading) {
+      result += `/${path}`
+    }
+    else {
+      result += path
+    }
   }
 
-  if (!path || path === '/') {
-    return base || '/'
-  }
-
-  const baseHasTrailing = base[base.length - 1] === '/'
-  const pathHasLeading = path[0] === '/'
-  if (baseHasTrailing && pathHasLeading) {
-    return base + path.slice(1)
-  }
-
-  if (!baseHasTrailing && !pathHasLeading) {
-    return `${base}/${path}`
-  }
-
-  return base + path
+  return result
 }
 
 /**
@@ -124,32 +133,28 @@ export function withQuery(input: string, query?: QueryObject): string {
   }
 
   const searchIndex = input.indexOf('?')
+  const hasExistingParams = searchIndex !== -1
 
-  if (searchIndex === -1) {
-    const normalizedQuery = Object.entries(query)
-      .filter(([, value]) => value !== undefined)
-      .flatMap(([key, value]) => {
-        if (Array.isArray(value)) {
-          return value.map(item => [key, normalizeQueryValue(item)])
-        }
-
-        return [[key, normalizeQueryValue(value)]]
-      })
-    const searchParams = new URLSearchParams(normalizedQuery)
-    const queryString = searchParams.toString()
-    return queryString ? `${input}?${queryString}` : input
-  }
-
-  const searchParams = new URLSearchParams(input.slice(searchIndex + 1))
-  const base = input.slice(0, searchIndex)
+  // Extract base URL and initialize search params
+  const base = hasExistingParams ? input.slice(0, searchIndex) : input
+  const searchParams = hasExistingParams
+    ? new URLSearchParams(input.slice(searchIndex + 1))
+    : new URLSearchParams()
 
   for (const [key, value] of Object.entries(query)) {
     if (value === undefined) {
       searchParams.delete(key)
+      continue
     }
-    else if (Array.isArray(value)) {
+
+    if (Array.isArray(value)) {
+      if (value.length === 0)
+        continue
+
       for (const item of value) {
-        searchParams.append(key, normalizeQueryValue(item))
+        if (item !== undefined) {
+          searchParams.append(key, normalizeQueryValue(item))
+        }
       }
     }
     else {
