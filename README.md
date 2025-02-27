@@ -52,6 +52,20 @@ declare function createCSV<T extends Record<string, unknown>>(
 ): string
 ```
 
+**Example:**
+
+```ts
+const data = [
+  { name: 'John', age: '30', city: 'New York' },
+  { name: 'Jane', age: '25', city: 'Boston' }
+]
+
+const csv = createCSV(data, ['name', 'age'])
+// name,age
+// John,30
+// Jane,25
+```
+
 #### `parseCSV`
 
 Parses a comma-separated values (CSV) string into an array of objects.
@@ -62,7 +76,22 @@ Parses a comma-separated values (CSV) string into an array of objects.
 ```ts
 type CSVRow<T extends string = string> = Record<T, string>
 
-declare function parseCSV<Header extends string>(csv: string): CSVRow<Header>[]
+declare function parseCSV<Header extends string>(csv: string, options?: {
+  /** @default ',' */
+  delimiter?: string
+  /** @default true */
+  trimValues?: boolean
+}): CSVRow<Header>[]
+```
+
+**Example:**
+
+```ts
+const csv = `name,age
+John,30
+Jane,25`
+
+const data = parseCSV<'name' | 'age'>(csv) // [{ name: 'John', age: '30' }, { name: 'Jane', age: '25' }]
 ```
 
 #### `escapeCSVValue`
@@ -85,7 +114,9 @@ declare function escapeCSVValue(value: unknown, { delimiter, quoteAll, }?: {
 
 #### `tryParseJSON`
 
-Type-safe wrapper around `JSON.stringify` falling back to the original value if it is not a string or an error is thrown.
+Type-safe wrapper around `JSON.stringify`.
+
+Falls back to the original value if the JSON serialization fails or the value is not a string.
 
 ```ts
 declare function tryParseJSON<T = unknown>(value: unknown): T
@@ -209,7 +240,7 @@ declare function withTrailingSlash(path?: string): string
 
 #### `joinURL`
 
-Joins the given base URL and path, ensuring that there is only one slash between them.
+Joins the given URL path segments, ensuring that there is only one slash between them.
 
 ```ts
 declare function joinURL(base?: string, path?: string): string
@@ -288,27 +319,6 @@ Generates a random string. The function is ported from [`nanoid`](https://github
 
 ```ts
 declare function generateRandomId(size?: number, dict?: string): string
-```
-
-#### `unindent`
-
-Removes common leading whitespace from a template string while also removing empty lines at the beginning and end.
-
-```ts
-declare function unindent(str: TemplateStringsArray | string): string
-```
-
-#### `stripIndents`
-
-Removes common leading whitespace from a template string.
-
-```ts
-stripIndents`
-  Hello
-    World
-` // => "Hello\nWorld"
-
-stripIndents('  Hello\n    World') // => "Hello\nWorld"
 ```
 
 ## License

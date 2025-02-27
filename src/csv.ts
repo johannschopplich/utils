@@ -1,8 +1,22 @@
+/**
+ * Represents a row in a CSV file with column names of type T.
+ */
 export type CSVRow<T extends string = string> = Record<T, string>
 
 /**
  * Converts an array of objects to a comma-separated values (CSV) string
  * that contains only the `columns` specified.
+ *
+ * @example
+ * const data = [
+ *   { name: 'John', age: '30', city: 'New York' },
+ *   { name: 'Jane', age: '25', city: 'Boston' }
+ * ]
+ *
+ * const csv = createCSV(data, ['name', 'age'])
+ * // name,age
+ * // John,30
+ * // Jane,25
  */
 export function createCSV<T extends Record<string, unknown>>(
   data: T[],
@@ -22,15 +36,22 @@ export function createCSV<T extends Record<string, unknown>>(
     quoteAll = false,
   } = options
 
+  // Pre-configure the escaper function to avoid recreating it in each iteration
   const escapeAndQuote = (value: unknown) =>
     escapeCSVValue(value, { delimiter, quoteAll })
 
-  const rows = data.map(obj =>
-    columns.map(key => escapeAndQuote(obj[key])).join(delimiter),
-  )
+  // Preallocate an array for better performance with large datasets
+  const rows = Array.from<string>({ length: addHeader ? data.length + 1 : data.length })
 
+  // Process header first if needed
+  let rowIndex = 0
   if (addHeader) {
-    rows.unshift(columns.map(escapeAndQuote).join(delimiter))
+    rows[rowIndex++] = columns.map(escapeAndQuote).join(delimiter)
+  }
+
+  // Process data rows
+  for (let i = 0; i < data.length; i++) {
+    rows[rowIndex++] = columns.map(key => escapeAndQuote(data[i][key])).join(delimiter)
   }
 
   return rows.join('\n')
@@ -41,6 +62,10 @@ export function createCSV<T extends Record<string, unknown>>(
  *
  * @remarks
  * Returns an empty string if the value is `null` or `undefined`.
+ *
+ * @example
+ * escapeCSVValue('hello, world'); // "hello, world"
+ * escapeCSVValue('contains "quotes"'); // "contains ""quotes"""
  */
 export function escapeCSVValue(value: unknown, {
   delimiter = ',',
@@ -75,8 +100,29 @@ export function escapeCSVValue(value: unknown, {
  *
  * @remarks
  * The first row of the CSV string is used as the header row.
+ *
+ * @example
+ * const csv = `name,age
+ * John,30
+ * Jane,25`
+ *
+ * const data = parseCSV<'name' | 'age'>(csv)
+ * // [{ name: 'John', age: '30' }, { name: 'Jane', age: '25' }]
  */
-export function parseCSV<Header extends string>(csv: string): CSVRow<Header>[] {
+export function parseCSV<Header extends string>(
+  csv: string,
+  options: {
+    /** @default ',' */
+    delimiter?: string
+    /** @default true */
+    trimValues?: boolean
+  } = {},
+): CSVRow<Header>[] {
+  const {
+    delimiter = ',',
+    trimValues = true,
+  } = options
+
   // Split the CSV string into rows
   const rows = csv.trim().split(/\r?\n/)
 
@@ -84,18 +130,34 @@ export function parseCSV<Header extends string>(csv: string): CSVRow<Header>[] {
   if (!header || !rest.length)
     return []
 
-  const headers = parseCSVLine(header)
+  const headers = parseCSVLine(header, { delimiter, trimValues })
 
   return rest.map((row) => {
-    const values = parseCSVLine(row)
+    if (!row.trim())
+      return {} as CSVRow<Header> // Skip empty rows
+
+    const values = parseCSVLine(row, { delimiter, trimValues })
 
     return Object.fromEntries(
-      headers.map((header, index) => [header, values[index]!]),
+      headers.map((header, index) => [header, values[index] ?? '']),
     ) as CSVRow<Header>
-  })
+  }).filter(row => Object.keys(row).length > 0) // Filter out empty rows
 }
 
-function parseCSVLine(input: string): string[] {
+/**
+ * Parses a single CSV line into an array of values.
+ * Correctly handles quoted fields containing delimiters and escaped quotes.
+ */
+function parseCSVLine(
+  input: string,
+  {
+    delimiter = ',',
+    trimValues = true,
+  }: {
+    delimiter: string
+    trimValues: boolean
+  },
+): string[] {
   const result: string[] = []
   let current = ''
   let inQuotes = false
@@ -104,8 +166,8 @@ function parseCSVLine(input: string): string[] {
     const char = input[i]
 
     if (char === '"') {
-      if (inQuotes && input[i + 1] === '"') {
-        // Double quotes inside quoted field
+      // Check for escaped quotes (two double quotes in sequence)
+      if (inQuotes && i + 1 < input.length && input[i + 1] === '"') {
         current += '"'
         i++ // Skip the next quote
       }
@@ -114,9 +176,9 @@ function parseCSVLine(input: string): string[] {
         inQuotes = !inQuotes
       }
     }
-    else if (char === ',' && !inQuotes) {
+    else if (char === delimiter && !inQuotes) {
       // End of field
-      result.push(current)
+      result.push(trimValues ? current.trim() : current)
       current = ''
     }
     else {
@@ -125,7 +187,7 @@ function parseCSVLine(input: string): string[] {
   }
 
   // Push the last field
-  result.push(current)
+  result.push(trimValues ? current.trim() : current)
 
-  return result.map(field => field.trim())
+  return result
 }
