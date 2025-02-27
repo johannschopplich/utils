@@ -94,20 +94,49 @@ Jane,25`
 const data = parseCSV<'name' | 'age'>(csv) // [{ name: 'John', age: '30' }, { name: 'Jane', age: '25' }]
 ```
 
-#### `escapeCSVValue`
+### Emitter
 
-Escapes a value for a CSV string.
+Simple and tiny event emitter library for JavaScript.
 
-> [!NOTE]
-> Returns an empty string if the value is `null` or `undefined`.
+`createEmitter` accepts interface with event name to listener argument types mapping:
 
 ```ts
-declare function escapeCSVValue(value: unknown, { delimiter, quoteAll, }?: {
-  /** @default ',' */
-  delimiter?: string
-  /** @default false */
-  quoteAll?: boolean
-}): string
+interface Events {
+  set: (name: string, count: number) => void
+  tick: () => void
+}
+
+const emitter = createNanoEvents<Events>()
+
+// Correct calls:
+emitter.emit('set', 'prop', 1)
+emitter.emit('tick')
+
+// Compilation errors:
+emitter.emit('set', 'prop', '1')
+emitter.emit('tick', 2)
+```
+
+The `on` method returns an `unbind` function. Call it and this listener will be removed from event:
+
+```ts
+const unbind = emitter.on('tick', (number) => {
+  console.log(`on ${number}`)
+})
+
+emitter.emit('tick', 1)
+// Prints "on 1"
+
+unbind()
+emitter.emit('tick', 2)
+// Prints nothing
+```
+
+You can get the used events list by accessing the `events` property:
+
+```ts
+const unbind = emitter.on('tick', () => { })
+emitter.events // => { tick: [ [Function] ] }
 ```
 
 ### JSON

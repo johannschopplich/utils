@@ -28,6 +28,10 @@
       "types": "./dist/csv.d.mts",
       "default": "./dist/csv.mjs"
     },
+    "./emitter": {
+      "types": "./dist/csv.d.mts",
+      "default": "./dist/csv.mjs"
+    },
     "./json": {
       "types": "./dist/json.d.mts",
       "default": "./dist/json.mjs"

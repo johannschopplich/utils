@@ -36,22 +36,15 @@ export function createCSV<T extends Record<string, unknown>>(
     quoteAll = false,
   } = options
 
-  // Pre-configure the escaper function to avoid recreating it in each iteration
   const escapeAndQuote = (value: unknown) =>
     escapeCSVValue(value, { delimiter, quoteAll })
 
-  // Preallocate an array for better performance with large datasets
-  const rows = Array.from<string>({ length: addHeader ? data.length + 1 : data.length })
+  const rows = data.map(obj =>
+    columns.map(key => escapeAndQuote(obj[key])).join(delimiter),
+  )
 
-  // Process header first if needed
-  let rowIndex = 0
   if (addHeader) {
-    rows[rowIndex++] = columns.map(escapeAndQuote).join(delimiter)
-  }
-
-  // Process data rows
-  for (let i = 0; i < data.length; i++) {
-    rows[rowIndex++] = columns.map(key => escapeAndQuote(data[i][key])).join(delimiter)
+    rows.unshift(columns.map(escapeAndQuote).join(delimiter))
   }
 
   return rows.join('\n')
@@ -117,12 +110,7 @@ export function parseCSV<Header extends string>(
     /** @default true */
     trimValues?: boolean
   } = {},
-): CSVRow<Header>[] {
-  const {
-    delimiter = ',',
-    trimValues = true,
-  } = options
-
+) {
   // Split the CSV string into rows
   const rows = csv.trim().split(/\r?\n/)
 
@@ -130,18 +118,22 @@ export function parseCSV<Header extends string>(
   if (!header || !rest.length)
     return []
 
-  const headers = parseCSVLine(header, { delimiter, trimValues })
+  const headers = parseCSVLine(header, options)
 
-  return rest.map((row) => {
-    if (!row.trim())
-      return {} as CSVRow<Header> // Skip empty rows
+  return rest
+    .map((row) => {
+    // Skip empty rows
+      if (!row.trim())
+        return undefined
 
-    const values = parseCSVLine(row, { delimiter, trimValues })
+      const values = parseCSVLine(row, options)
 
-    return Object.fromEntries(
-      headers.map((header, index) => [header, values[index] ?? '']),
-    ) as CSVRow<Header>
-  }).filter(row => Object.keys(row).length > 0) // Filter out empty rows
+      return Object.fromEntries(
+        headers.map((header, index) => [header, values[index]]),
+      ) as CSVRow<Header>
+    })
+    // Filter out empty rows
+    .filter(Boolean) as CSVRow<Header>[]
 }
 
 /**
@@ -154,8 +146,8 @@ function parseCSVLine(
     delimiter = ',',
     trimValues = true,
   }: {
-    delimiter: string
-    trimValues: boolean
+    delimiter?: string
+    trimValues?: boolean
   },
 ): string[] {
   const result: string[] = []
