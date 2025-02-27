@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { joinURL, withBase, withoutBase, withoutTrailingSlash, withQuery, withTrailingSlash } from '../src/path'
+import { joinURL, withBase, withoutBase, withoutTrailingSlash, withQuery, withTrailingSlash } from './path'
 
 describe('path', () => {
   describe('withBase', () => {
