@@ -243,7 +243,7 @@ declare function withTrailingSlash(path?: string): string
 Joins the given URL path segments, ensuring that there is only one slash between them.
 
 ```ts
-declare function joinURL(base?: string, path?: string): string
+declare function joinURL(...paths: (string | undefined)[]): string
 ```
 
 #### `withBase`

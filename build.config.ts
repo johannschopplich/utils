@@ -5,7 +5,6 @@ export default defineBuildConfig({
     'src/index',
     'src/array',
     'src/csv',
-    'src/is',
     'src/json',
     'src/lazy',
     'src/module',
