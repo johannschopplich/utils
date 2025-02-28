@@ -55,25 +55,32 @@ export function createCSV<T extends Record<string, unknown>>(
  *
  * @remarks
  * Returns an empty string if the value is `null` or `undefined`.
+ * Values containing delimiters, quotes, or line breaks are quoted.
+ * Within quoted values, double quotes are escaped by doubling them.
  *
  * @example
  * escapeCSVValue('hello, world'); // "hello, world"
  * escapeCSVValue('contains "quotes"'); // "contains ""quotes"""
  */
-export function escapeCSVValue(value: unknown, {
-  delimiter = ',',
-  quoteAll = false,
-}: {
-  /** @default ',' */
-  delimiter?: string
-  /** @default false */
-  quoteAll?: boolean
-} = {}) {
+export function escapeCSVValue(
+  value: unknown,
+  options: {
+    /** @default ',' */
+    delimiter?: string
+    /** @default false */
+    quoteAll?: boolean
+  } = {},
+) {
+  const {
+    delimiter = ',',
+    quoteAll = false,
+  } = options
+
   if (value == null) {
     return ''
   }
 
-  const stringValue = value.toString()
+  const stringValue = String(value)
   const needsQuoting = quoteAll
     || stringValue.includes(delimiter)
     || stringValue.includes('"')
@@ -81,7 +88,7 @@ export function escapeCSVValue(value: unknown, {
     || stringValue.includes('\r')
 
   if (needsQuoting) {
-    // Encode double quotes and wrap the entire value in quotes
+    // Escape quotes and wrap the value
     return `"${stringValue.replaceAll('"', '""')}"`
   }
 
