@@ -101,12 +101,14 @@ Simple and tiny event emitter library for JavaScript.
 `createEmitter` accepts interface with event name to listener argument types mapping:
 
 ```ts
+import { createEmitter } from '@byjohann/utils'
+
 interface Events {
   set: (name: string, count: number) => void
   tick: () => void
 }
 
-const emitter = createNanoEvents<Events>()
+const emitter = createEmitter<Events>()
 
 // Correct calls:
 emitter.emit('set', 'prop', 1)
@@ -328,7 +330,11 @@ const url = withQuery('https://example.com', {
 Simple template engine to replace variables in a string.
 
 ```ts
-declare function template(str: string, variables: Record<string | number, any>, fallback?: string | ((key: string) => string)): string
+declare function template(
+  str: string,
+  variables: Record<string | number, any>,
+  fallback?: string | ((key: string) => string)
+): string
 ```
 
 **Example:**
