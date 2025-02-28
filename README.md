@@ -113,9 +113,9 @@ const data = parseCSV<'name' | 'age'>(csv) // [{ name: 'John', age: '30' }, { na
 
 ### Emitter
 
-Simple and tiny event emitter library for JavaScript.
+Simple and tiny event emitter library, based on [nanoevents](https://github.com/ai/nanoevents).
 
-`createEmitter` accepts interface with event name to listener argument types mapping:
+`createEmitter` accepts an interface with event names and their arguments. It returns an emitter object with the `emit` and `on` methods.
 
 ```ts
 import { createEmitter } from 'utilful'
@@ -151,7 +151,7 @@ emitter.emit('tick', 2)
 // Prints nothing
 ```
 
-You can get the used events list by accessing the `events` property:
+Access the `events` property to get a list of used events:
 
 ```ts
 const unbind = emitter.on('tick', () => { })
