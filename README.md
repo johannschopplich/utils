@@ -90,12 +90,15 @@ Parses a comma-separated values (CSV) string into an array of objects.
 ```ts
 type CSVRow<T extends string = string> = Record<T, string>
 
-declare function parseCSV<Header extends string>(csv: string, options?: {
+declare function parseCSV<Header extends string>(
+  csv?: string | null | undefined,
+  options?: {
   /** @default ',' */
-  delimiter?: string
-  /** @default true */
-  trimValues?: boolean
-}): CSVRow<Header>[]
+    delimiter?: string
+    /** @default true */
+    trimValues?: boolean
+  }
+): CSVRow<Header>[]
 ```
 
 **Example:**

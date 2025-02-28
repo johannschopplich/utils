@@ -15,9 +15,9 @@ describe('path', () => {
       { base: '/', input: 'https://test.com', out: 'https://test.com' },
     ]
 
-    for (const t of tests) {
-      it(`${JSON.stringify(t.base)} + ${JSON.stringify(t.input)}`, () => {
-        expect(withBase(t.input, t.base)).toBe(t.out)
+    for (const test of tests) {
+      it(`${JSON.stringify(test.base)} + ${JSON.stringify(test.input)}`, () => {
+        expect(withBase(test.input, test.base)).toBe(test.out)
       })
     }
   })
@@ -40,9 +40,9 @@ describe('path', () => {
       { base: '/', input: 'https://test.com', out: 'https://test.com' },
     ]
 
-    for (const t of tests) {
-      it(`${JSON.stringify(t.input)}-${JSON.stringify(t.base)}`, () => {
-        expect(withoutBase(t.input, t.base)).toBe(t.out)
+    for (const test of tests) {
+      it(`${JSON.stringify(test.input)}-${JSON.stringify(test.base)}`, () => {
+        expect(withoutBase(test.input, test.base)).toBe(test.out)
       })
     }
   })
@@ -59,9 +59,9 @@ describe('path', () => {
       { input: ['a', 'b/', '/c'], out: 'a/b/c' },
     ] as const
 
-    for (const t of tests) {
-      it(`joinURL(${t.input.map(i => JSON.stringify(i)).join(', ')}) === ${JSON.stringify(t.out)}`, () => {
-        expect(joinURL(...(t.input))).toBe(t.out)
+    for (const test of tests) {
+      it(`joinURL(${test.input.map(i => JSON.stringify(i)).join(', ')}) === ${JSON.stringify(test.out)}`, () => {
+        expect(joinURL(...(test.input))).toBe(test.out)
       })
     }
   })
@@ -131,9 +131,9 @@ describe('path', () => {
       },
     ]
 
-    for (const t of tests) {
-      it(`${t.input.toString()} with ${JSON.stringify(t.query)}`, () => {
-        expect(withQuery(t.input, t.query)).toBe(t.out)
+    for (const test of tests) {
+      it(`${test.input.toString()} with ${JSON.stringify(test.query)}`, () => {
+        expect(withQuery(test.input, test.query)).toBe(test.out)
       })
     }
   })
