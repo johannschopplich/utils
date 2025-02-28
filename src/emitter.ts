@@ -1,101 +1,121 @@
-interface EventsMap {
-  [event: string]: any
-}
+/* eslint-disable ts/method-signature-style */
+export type EventType = string | symbol
 
-interface DefaultEvents extends EventsMap {
-  [event: string]: (...args: any) => void
-}
+// An event handler can take an optional event argument
+// and should not return a value
+export type Handler<T = unknown> = (event: T) => void
+export type WildcardHandler<T = Record<string, unknown>> = (
+  type: keyof T,
+  event: T[keyof T]
+) => void
 
-interface Unsubscribe {
-  (): void
-}
+export type EventHandlerList<T = unknown> = Handler<T>[]
+export type WildCardEventHandlerList<T = Record<string, unknown>> = WildcardHandler<T>[]
 
-export interface Emitter<Events extends EventsMap = DefaultEvents> {
-  /**
-   * Calls each of the listeners registered for a given event.
-   *
-   * @example
-   * emitter.emit('tick', tickType, tickDuration)
-   *
-   * @param event The event name.
-   * @param args The arguments for listeners.
-   */
-  emit: <K extends keyof Events>(
-    this: this,
-    event: K,
-    ...args: Parameters<Events[K]>
-  ) => void
+// A map of event types and their corresponding event handlers.
+export type EventHandlerMap<Events extends Record<EventType, unknown>> = Map<
+  keyof Events | '*',
+  EventHandlerList<Events[keyof Events]> | WildCardEventHandlerList<Events>
+>
 
-  /**
-   * Event names in keys and arrays with listeners in values.
-   *
-   * @example
-   * emitter1.events = emitter2.events
-   * emitter2.events = { }
-   */
-  events: Partial<{ [E in keyof Events]: Events[E][] }>
+export interface Emitter<Events extends Record<EventType, unknown>> {
+  all: EventHandlerMap<Events>
 
-  /**
-   * Add a listener for a given event.
-   *
-   * @example
-   * const unbind = emitter.on('tick', (tickType, tickDuration) => {
-   *   count += 1
-   * })
-   *
-   * disable () {
-   *   unbind()
-   * }
-   *
-   * @param event The event name.
-   * @param cb The listener function.
-   * @returns Unbind listener from event.
-   */
-  on: <K extends keyof Events>(this: this, event: K, cb: Events[K]) => Unsubscribe
+  on<Key extends keyof Events>(type: Key, handler: Handler<Events[Key]>): void
+  on(type: '*', handler: WildcardHandler<Events>): void
+
+  off<Key extends keyof Events>(
+    type: Key,
+    handler?: Handler<Events[Key]>
+  ): void
+  off(type: '*', handler: WildcardHandler<Events>): void
+
+  emit<Key extends keyof Events>(type: Key, event: Events[Key]): void
+  emit<Key extends keyof Events>(
+    type: undefined extends Events[Key] ? Key : never
+  ): void
 }
 
 /**
- * Create event emitter.
+ * Simple functional event emitter / pubsub.
  *
- * @example
- * import { createEmitter } from 'nanoevents'
- *
- * class Ticker {
- *   constructor() {
- *     this.emitter = createEmitter()
- *   }
- *   on(...args) {
- *     return this.emitter.on(...args)
- *   }
- *   tick() {
- *     this.emitter.emit('tick')
- *   }
- * }
- *
- * @remarks Ported from `nanoevents`.
- * @see https://github.com/ai/nanoevents
+ * @remarks Ported from `mitt`.
+ * @see https://github.com/developit/mitt
  */
-export function createEmitter<
-  Events extends EventsMap = DefaultEvents,
->(): Emitter<Events> {
-  return ({
-    emit(event, ...args) {
-      for (
-        let callbacks = this.events[event] || [],
-          i = 0,
-          length = callbacks.length;
-        i < length;
-        i++
-      ) {
-        callbacks[i](...args)
+export function createEmitter<Events extends Record<EventType, unknown>>(
+  all?: EventHandlerMap<Events>,
+): Emitter<Events> {
+  type GenericEventHandler =
+    | Handler<Events[keyof Events]>
+    | WildcardHandler<Events>
+
+  all ||= new Map()
+
+  return {
+    /**
+     * A Map of event names to registered handler functions.
+     */
+    all,
+
+    /**
+     * Register an event handler for the given type.
+     * @param {string|symbol} type Type of event to listen for, or `'*'` for all events
+     * @param {Function} handler Function to call in response to given event
+     * @memberOf createEmitter
+     */
+    on<Key extends keyof Events>(type: Key, handler: GenericEventHandler) {
+      const handlers: GenericEventHandler[] | undefined = all.get(type)
+
+      if (handlers) {
+        handlers.push(handler)
+      }
+      else {
+        all.set(type, [handler] as EventHandlerList<Events[keyof Events]>)
       }
     },
-    events: {},
-    on(event, cb) {
-      ;(this.events[event] ||= []).push(cb)
-      return () => {
-        this.events[event] = this.events[event]?.filter(i => cb !== i)
+
+    /**
+     * Remove an event handler for the given type.
+     * If `handler` is omitted, all handlers of the given type are removed.
+     *
+     * @param {string|symbol} type Type of event to unregister `handler` from (`'*'` to remove a wildcard handler)
+     * @param {Function} [handler] Handler function to remove
+     * @memberOf createEmitter
+     */
+    off<Key extends keyof Events>(type: Key, handler?: GenericEventHandler) {
+      const handlers: GenericEventHandler[] | undefined = all.get(type)
+
+      if (handlers) {
+        if (handler) {
+          handlers.splice(handlers.indexOf(handler) >>> 0, 1)
+        }
+        else {
+          all.set(type, [])
+        }
       }
     },
-  })
+
+    /**
+     * Invoke all handlers for the given type.
+     * If present, `'*'` handlers are invoked after type-matched handlers.
+     *
+     * @remarks
+     * Manually firing '*' handlers is not supported.
+     *
+     * @param {string|symbol} type The event type to invoke
+     * @param {Any} [evt] Any value (object is recommended and powerful), passed to each handler
+     * @memberOf createEmitter
+     */
+    emit<Key extends keyof Events>(type: Key, evt?: Events[Key]) {
+      let handlers = all.get(type)
+      ;(handlers as EventHandlerList<Events[keyof Events]>)
+        ?.slice()
+        .forEach((handler) => { handler(evt!) })
+
+      handlers = all.get('*')
+      ;(handlers as WildCardEventHandlerList<Events>)
+        ?.slice()
+        .forEach((handler) => { handler(type, evt!) })
+    },
+  }
 }

@@ -113,49 +113,36 @@ const data = parseCSV<'name' | 'age'>(csv) // [{ name: 'John', age: '30' }, { na
 
 ### Emitter
 
-Simple and tiny event emitter library, based on [nanoevents](https://github.com/ai/nanoevents).
+Tiny functional event emitter / pubsub, based on [mitt](https://github.com/developit/mitt).
 
-`createEmitter` accepts an interface with event names and their arguments. It returns an emitter object with the `emit` and `on` methods.
+**Example:**
 
 ```ts
 import { createEmitter } from 'utilful'
 
-interface Events {
-  set: (name: string, count: number) => void
-  tick: () => void
+// eslint-disable-next-line ts/consistent-type-definitions
+type Events = {
+  foo: { a: string }
 }
 
 const emitter = createEmitter<Events>()
 
-// Correct calls:
-emitter.emit('set', 'prop', 1)
-emitter.emit('tick')
+// Listen to an event
+emitter.on('foo', e => console.log('foo', e))
 
-// Compilation errors:
-emitter.emit('set', 'prop', '1')
-emitter.emit('tick', 2)
-```
+// Listen to all events
+emitter.on('*', (type, e) => console.log(type, e))
 
-The `on` method returns an `unbind` function. Call it and this listener will be removed from event:
+// Fire an event
+emitter.emit('foo', { a: 'b' })
 
-```ts
-const unbind = emitter.on('tick', (number) => {
-  console.log(`on ${number}`)
-})
+// Clearing all events
+emitter.all.clear()
 
-emitter.emit('tick', 1)
-// Prints "on 1"
-
-unbind()
-emitter.emit('tick', 2)
-// Prints nothing
-```
-
-Access the `events` property to get a list of used events:
-
-```ts
-const unbind = emitter.on('tick', () => { })
-emitter.events // => { tick: [ [Function] ] }
+// Working with handler references:
+function onFoo() {}
+emitter.on('foo', onFoo) // Listen
+emitter.off('foo', onFoo) // Unlisten
 ```
 
 ### JSON
