@@ -1,18 +1,18 @@
 {
-  "name": "@byjohann/utils",
+  "name": "utilful",
   "type": "module",
   "version": "0.7.2",
   "packageManager": "pnpm@10.5.2",
-  "description": "A collection of utilities for my projects",
+  "description": "A collection of TypeScript utilities",
   "author": "Johann Schopplich <hello@johannschopplich.com>",
   "license": "MIT",
-  "homepage": "https://github.com/johannschopplich/utils#readme",
+  "homepage": "https://github.com/johannschopplich/utilful#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/johannschopplich/utils.git"
+    "url": "git+https://github.com/johannschopplich/utilful.git"
   },
   "bugs": {
-    "url": "https://github.com/johannschopplich/utils/issues"
+    "url": "https://github.com/johannschopplich/utilful/issues"
   },
   "sideEffects": false,
   "exports": {

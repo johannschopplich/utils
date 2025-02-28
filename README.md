@@ -1,20 +1,34 @@
-# @byjohann/utils
+# utilful
 
-A collection of utility functions that I use across my JavaScript and TypeScript projects.
+A collection of TypeScript utilities that I use across my projects.
+
+## Table of Contents
+
+- [Installation](#installation)
+- [API](#api)
+  - [Array](#array)
+  - [CSV](#csv)
+  - [Emitter](#emitter)
+  - [JSON](#json)
+  - [Lazy](#lazy)
+  - [Module](#module)
+  - [Object](#object)
+  - [Path](#path)
+  - [String](#string)
 
 ## Installation
 
-Run the following command to add `@byjohann/utils` to your project.
+Run the following command to add `utilful` to your project.
 
 ```bash
 # npm
-npm install -D @byjohann/utils
+npm install -D utilful
 
 # pnpm
-pnpm add -D @byjohann/utils
+pnpm add -D utilful
 
 # yarn
-yarn add -D @byjohann/utils
+yarn add -D utilful
 ```
 
 ## API
@@ -101,7 +115,7 @@ Simple and tiny event emitter library for JavaScript.
 `createEmitter` accepts interface with event name to listener argument types mapping:
 
 ```ts
-import { createEmitter } from '@byjohann/utils'
+import { createEmitter } from 'utilful'
 
 interface Events {
   set: (name: string, count: number) => void
@@ -202,7 +216,7 @@ declare function interopDefault<T>(m: T | Promise<T>): Promise<T extends {
 **Example:**
 
 ```ts
-import { interopDefault } from '@byjohann/utils'
+import { interopDefault } from 'utilful'
 
 async function loadModule() {
   const mod = await interopDefault(import('./module.js'))
@@ -312,7 +326,7 @@ declare function withQuery(input: string, query?: QueryObject): string
 **Example:**
 
 ```ts
-import { withQuery } from '@byjohann/utils'
+import { withQuery } from 'utilful'
 
 const url = withQuery('https://example.com', {
   foo: 'bar',
@@ -340,7 +354,7 @@ declare function template(
 **Example:**
 
 ```ts
-import { template } from '@byjohann/utils'
+import { template } from 'utilful'
 
 const str = 'Hello, {name}!'
 const variables = { name: 'world' }
