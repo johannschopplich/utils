@@ -24,16 +24,11 @@ export interface Emitter<Events extends Record<EventType, unknown>> {
   on<Key extends keyof Events>(type: Key, handler: Handler<Events[Key]>): void
   on(type: '*', handler: WildcardHandler<Events>): void
 
-  off<Key extends keyof Events>(
-    type: Key,
-    handler?: Handler<Events[Key]>
-  ): void
+  off<Key extends keyof Events>(type: Key, handler?: Handler<Events[Key]>): void
   off(type: '*', handler: WildcardHandler<Events>): void
 
   emit<Key extends keyof Events>(type: Key, event: Events[Key]): void
-  emit<Key extends keyof Events>(
-    type: undefined extends Events[Key] ? Key : never
-  ): void
+  emit<Key extends keyof Events>(type: undefined extends Events[Key] ? Key : never): void
 }
 
 /**
@@ -45,9 +40,7 @@ export interface Emitter<Events extends Record<EventType, unknown>> {
 export function createEmitter<Events extends Record<EventType, unknown>>(
   all?: EventHandlerMap<Events>,
 ): Emitter<Events> {
-  type GenericEventHandler =
-    | Handler<Events[keyof Events]>
-    | WildcardHandler<Events>
+  type GenericEventHandler = Handler<Events[keyof Events]> | WildcardHandler<Events>
 
   all ||= new Map()
 
@@ -108,14 +101,16 @@ export function createEmitter<Events extends Record<EventType, unknown>>(
      */
     emit<Key extends keyof Events>(type: Key, evt?: Events[Key]) {
       let handlers = all.get(type)
-      ;(handlers as EventHandlerList<Events[keyof Events]>)
-        ?.slice()
-        .forEach((handler) => { handler(evt!) })
+      if (handlers) {
+        for (const handler of [...(handlers as EventHandlerList<Events[keyof Events]>)])
+          handler(evt!)
+      }
 
       handlers = all.get('*')
-      ;(handlers as WildCardEventHandlerList<Events>)
-        ?.slice()
-        .forEach((handler) => { handler(type, evt!) })
+      if (handlers) {
+        for (const handler of [...(handlers as WildCardEventHandlerList<Events>)])
+          handler(type, evt!)
+      }
     },
   }
 }
