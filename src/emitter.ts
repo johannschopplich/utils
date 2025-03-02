@@ -19,7 +19,7 @@ export type EventHandlerMap<Events extends Record<EventType, unknown>> = Map<
 >
 
 export interface Emitter<Events extends Record<EventType, unknown>> {
-  all: EventHandlerMap<Events>
+  events: EventHandlerMap<Events>
 
   on<Key extends keyof Events>(type: Key, handler: Handler<Events[Key]>): void
   on(type: '*', handler: WildcardHandler<Events>): void
@@ -38,75 +38,87 @@ export interface Emitter<Events extends Record<EventType, unknown>> {
  * @see https://github.com/developit/mitt
  */
 export function createEmitter<Events extends Record<EventType, unknown>>(
-  all?: EventHandlerMap<Events>,
+  events?: EventHandlerMap<Events>,
 ): Emitter<Events> {
   type GenericEventHandler = Handler<Events[keyof Events]> | WildcardHandler<Events>
 
-  all ||= new Map()
+  events ||= new Map()
 
   return {
     /**
      * A Map of event names to registered handler functions.
      */
-    all,
+    events,
 
     /**
      * Register an event handler for the given type.
-     * @param {string|symbol} type Type of event to listen for, or `'*'` for all events
-     * @param {Function} handler Function to call in response to given event
+     *
      * @memberOf createEmitter
      */
-    on<Key extends keyof Events>(type: Key, handler: GenericEventHandler) {
-      const handlers: GenericEventHandler[] | undefined = all.get(type)
+    on<Key extends keyof Events>(
+      /** Type of event to listen for, or `'*'` for all events */
+      type: Key,
+      /** Function to call in response to given event */
+      handler: GenericEventHandler,
+    ) {
+      const handlers: GenericEventHandler[] | undefined = events.get(type)
 
       if (handlers) {
         handlers.push(handler)
       }
       else {
-        all.set(type, [handler] as EventHandlerList<Events[keyof Events]>)
+        events.set(type, [handler] as EventHandlerList<Events[keyof Events]>)
       }
     },
 
     /**
      * Remove an event handler for the given type.
+     *
+     * @remarks
      * If `handler` is omitted, all handlers of the given type are removed.
      *
-     * @param {string|symbol} type Type of event to unregister `handler` from (`'*'` to remove a wildcard handler)
-     * @param {Function} [handler] Handler function to remove
      * @memberOf createEmitter
      */
-    off<Key extends keyof Events>(type: Key, handler?: GenericEventHandler) {
-      const handlers: GenericEventHandler[] | undefined = all.get(type)
+    off<Key extends keyof Events>(
+      /** Type of event to unregister `handler` from (`'*'` to remove a wildcard handler) */
+      type: Key,
+      /** Handler function to remove */
+      handler?: GenericEventHandler,
+    ) {
+      const handlers: GenericEventHandler[] | undefined = events.get(type)
 
       if (handlers) {
         if (handler) {
           handlers.splice(handlers.indexOf(handler) >>> 0, 1)
         }
         else {
-          all.set(type, [])
+          events.set(type, [])
         }
       }
     },
 
     /**
      * Invoke all handlers for the given type.
-     * If present, `'*'` handlers are invoked after type-matched handlers.
      *
      * @remarks
+     * If present, `'*'` handlers are invoked after type-matched handlers.
      * Manually firing '*' handlers is not supported.
      *
-     * @param {string|symbol} type The event type to invoke
-     * @param {Any} [evt] Any value (object is recommended and powerful), passed to each handler
      * @memberOf createEmitter
      */
-    emit<Key extends keyof Events>(type: Key, evt?: Events[Key]) {
-      let handlers = all.get(type)
+    emit<Key extends keyof Events>(
+      /** The event type to invoke */
+      type: Key,
+      /** Any value (object is recommended and powerful), passed to each handler */
+      evt?: Events[Key],
+    ) {
+      let handlers = events.get(type)
       if (handlers) {
         for (const handler of [...(handlers as EventHandlerList<Events[keyof Events]>)])
           handler(evt!)
       }
 
-      handlers = all.get('*')
+      handlers = events.get('*')
       if (handlers) {
         for (const handler of [...(handlers as WildCardEventHandlerList<Events>)])
           handler(type, evt!)

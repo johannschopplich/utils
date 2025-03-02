@@ -39,8 +39,8 @@ describe('event emitter', () => {
 
     describe('properties', () => {
       it('exposes the event handler map', () => {
-        expect(inst).toHaveProperty('all')
-        expect(inst.all).toBeInstanceOf(Map)
+        expect(inst).toHaveProperty('events')
+        expect(inst.events).toBeInstanceOf(Map)
       })
     })
 
@@ -68,7 +68,7 @@ describe('event emitter', () => {
         expect(events.get('foo')).toEqual([foo, bar])
       })
 
-      it('not normalizes case', () => {
+      it('does not normalize case', () => {
         const foo = () => {}
         inst.on('FOO', foo)
         inst.on('Bar', foo)
@@ -104,7 +104,7 @@ describe('event emitter', () => {
         expect(events.get('foo')).toEqual([])
       })
 
-      it('not normalizes case', () => {
+      it('does not normalize case', () => {
         const foo = () => {}
         inst.on('FOO', foo)
         inst.on('Bar', foo)
@@ -155,7 +155,7 @@ describe('event emitter', () => {
         expect(handler).toHaveBeenCalledTimes(1)
       })
 
-      it('not ignores case', () => {
+      it('does not ignore case', () => {
         const onFoo = vi.fn()
         const onFOO = vi.fn()
         events.set('Foo', [onFoo])

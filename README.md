@@ -137,7 +137,7 @@ emitter.on('*', (type, e) => console.log(type, e))
 emitter.emit('foo', { a: 'b' })
 
 // Clearing all events
-emitter.all.clear()
+emitter.events.clear()
 
 // Working with handler references:
 function onFoo() {}
