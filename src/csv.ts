@@ -59,8 +59,8 @@ export function createCSV<T extends Record<string, unknown>>(
  * Within quoted values, double quotes are escaped by doubling them.
  *
  * @example
- * escapeCSVValue('hello, world') // 'hello, world'
- * escapeCSVValue('contains "quotes"') // 'contains ""quotes""'
+ * escapeCSVValue('hello, world') // "hello, world"
+ * escapeCSVValue('contains "quotes"') // "contains ""quotes"""
  */
 export function escapeCSVValue(
   value: unknown,
